@@ -1,0 +1,12 @@
+// Rule: Vulnerable Driver Loading
+//
+// Description: Detects loading of known vulnerable drivers based on their hashes listed on GitHub LOLDrivers 
+// Date: 2023-04-24
+// Author: @jxd_io
+// References: https://www.loldrivers.io/
+//
+let loldrivers = (externaldata(SHA256:string)
+  [@"https://raw.githubusercontent.com/magicsword-io/LOLDrivers/main/detections/hashes/samples.sha256"] with (format="txt"));
+  loldrivers
+  | join DeviceEvents on SHA256
+  | where ActionType == "DriverLoad"
