@@ -1,0 +1,10 @@
+let tld_domains = dynamic(".zip");
+let proxy_ips = dynamic("10.1.1.1");
+DeviceNetworkEvents
+| where RemoteUrl has_any (tld_domains)
+| extend Domain = split(split(RemoteUrl, "//")[1], "/")[0]
+| where Domain endswith tld_domains
+| where ipv4_is_private(RemoteIP) != 1
+    or RemoteIP has_any (proxy_ips)
+| summarize Hits=count() by tostring(Domain)
+| sort by Hits
